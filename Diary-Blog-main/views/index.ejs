@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title class="">Blog__Chronicles |  <%= title %></title>
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/styles.css">
+    
+    
+</head>
+<body>
+    <nav>
+        <div class="site-title">
+            <a href="/"><h1>Blog__Chronicles</h1></a>
+            <p>Blog your thoughts</p>
+        </div>
+        <ul>
+            <li>
+                <div class="search-container">
+                    <div class="search-header" onclick="toggleSearch()">
+                      <span id="searchText">Search</span>
+                    </div>
+                    <div class="search-expand" id="searchExpand">
+                      <div class="search-close" onclick="toggleSearch()"></div>
+                      <input type="text" id="searchInput" placeholder="Type your search...">
+                      <button onclick="submitSearch()">Submit</button>
+                    </div>
+                  </div>
+            </li>
+            <li><a href="/blogs">Blogs</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog/create">New Blog</a></li>
+        </ul>
+    </nav>
+
+    
+    <div class="blogs_content" id="searchResultsContainer">
+        <h2>All Blogs</h2>
+        <% if(blogs.length>0 ){%>
+            <% blogs.forEach(blog =>{ %>
+                <a href="/blogs/<%= blog._id %>">
+                <h3 class="title"><%= blog.title %></h3>
+                <p class="snippet"><%= blog.snippet %></p>
+                </a>
+            <% }) %>
+        <%} else {  %>
+            <p>There are no blogs to display.......</p>
+
+        <% } %>
+    </div>
+
+
+
+
+    
+
+    <footer>
+        Copyright &copy; Himanshu Patil 2003
+    </footer>
+    <script>
+
+          async function submitSearch() {
+                    var searchTerm = document.getElementById("searchInput").value;
+
+                   try {
+                        //response will contain array of matched string blogs
+                      const response = await fetch('/search', {
+                      method: 'POST',
+                      headers: {
+                     'Content-Type': 'application/json',
+                 },
+                        body: JSON.stringify({ searchInput: searchTerm }),
+             });
+
+                 if (response.ok) {
+                   const data = await response.json();
+                   console.log("Search results:", data);
+                  // Update your UI with the search results if needed
+                  // For example, render the results on the page
+                  renderSearchResults(data);
+             } else {
+                 console.error("Search request failed:", response.statusText);
+          }
+          } catch (error) {
+                console.error("Error during search request:", error);
+           }
+            }
+
+
+            function renderSearchResults(results) {
+  // Assuming you have a container element to display search results
+                  var resultsContainer = document.getElementById('searchResultsContainer');
+                  resultsContainer.innerHTML = ""; // Clear existing content
+
+                if (results.length > 0) {
+                   results.forEach(blog => {
+                 var resultElement = document.createElement('div');
+                      resultElement.innerHTML = `
+                             <a href="/blogs/${blog._id}">
+                             <h3 class="title">${blog.title}</h3>
+                             <p class="snippet">${blog.snippet}</p>
+                             <p class="body">${blog.body}
+                              </a>
+                       `;
+                             resultsContainer.appendChild(resultElement);
+               });
+              } else {
+                     resultsContainer.innerHTML = "<p>No results found.</p>";
+             }
+            }
+                          
+        
+   
+      </script>
+    </body>
+    </html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog__Chronicles | | <%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+    
+    
+</head>
+<body>
+    
+    <nav>
+        <div class="site-title">
+            <a href="/"><h1>Blog__Chronicles</h1></a>
+            <p>Blog your thoughts</p>
+        </div>
+        <ul>
+            <li><a href="/blogs">Blogs</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog/create">New Blog</a></li>
+        </ul>
+    </nav>
+
+    <div class="details content ">
+        <h2 class="blog-title" ><%= blog.title %></h2>
+        <div class="content blog-body">
+            <p><%- blog.body %></p>
+            <br>
+        </div>
+        <div class="media-wrapper">
+            <div class="blog-img">
+                <img src="<%= blog.imageUrl %>" alt="" >
+            </div>
+           <% if( blog.videoUrl != ""){    %>
+                <div class="blog-video">
+                    <video controls src="<%= blog.videoUrl %>" alt="" >
+                </div>
+            <% } %>
+        </div>
+
+
+
+        <div class="buttons">   
+            <a class="delete btns" data-doc="<%= blog._id%>">DELETE</a>
+            <a class="update btns"  data-doc="<%= blog._id%>" href="/blogs/<%= blog._id %>/edit">UPDATE</a>
+        </div>
+        
+        
+    </div>
+    <!-- <a class="delete" data-doc="<%= blog._id%>">DELETE</a> -->
+    
+    <footer>
+        Copyright &copy; Himanshu Patil 2003
+    </footer>
+
+
+    <script>
+        const trashcan= document.querySelector('a.delete');
+        trashcan.addEventListener('click', (e)=>{
+            const endpoint=`/blogs/${trashcan.dataset.doc}`;
+            fetch(endpoint,{
+            method:'DELETE'
+        })
+        .then((response)=>response.json())
+        .then((data)=>
+            window.location.href = data.redirect
+        )
+        .catch(err=>{
+            console.log(err);
+        })
+        })
+
+        
+    </script>
+</body>
+</html>
